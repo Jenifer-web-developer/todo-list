@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do-List</title>
+  <style>
+    body{
+      font-family:Arial, Helvetica, sans-serif;
+    }
+    .todo-grid, .todo-input-grid{
+      display:grid;
+      grid-template-columns: 200px 150px 100px;
+      column-gap:10px;
+      row-gap:10px;
+    }
+    .todo-input-grid{
+      margin-bottom:10px;
+    }
+    .css-todo-task, .css-duedate{
+      font-size:15px;
+      padding:10px;
+    }
+    .css-add-button{
+      background-color:rgb(2, 129, 2);
+      font-size:15px;
+      cursor:pointer;
+      color:white;
+      border:none;
+    }
+    .css-delete-button{
+      background-color:rgb(190, 5, 5);
+      font-size:15px;
+      padding:10px;
+      cursor:pointer;
+      color:white;
+      border:none;
+    }
+  </style>
+</head>
+<body>
+  <p>Todo List</p>
+  <div class="todo-input-grid">
+    <input type="text" placeholder="Todo name" class="js-todo-task css-todo-task" required/>
+    <input type="date" class="js-duedate css-duedate" required/>
+    <button class="css-add-button js-add-button">Add</button>
+  </div>
+  <div class="js-tasks todo-grid"></div>
+  <script>
+    const todoTask=JSON.parse(localStorage.getItem('todoList'));
+    rendartodoTask();
+    function rendartodoTask(){
+      let taskList='';
+      todoTask.forEach((task,index)=>{
+       const {name}=task;
+       const {dueDate}=task;
+       const html=`<div> ${name}</div> 
+                   <div>${dueDate}</div>
+                   <button class="css-delete-button js-delete-button">Delete</button>`;
+        taskList+=html;});
+       document.querySelector('.js-tasks').innerHTML=taskList;
+       document.querySelectorAll('.js-delete-button').forEach((deleteButton,index)=>{
+        deleteButton.addEventListener('click', ()=>{ todoTask.splice(index,1); 
+                                                     localStorage.getItem('todoList');
+                                                     localStorage.setItem('todoList',JSON.stringify(todoTask));
+                                                     rendartodoTask();
+                                                    });
+       });
+    }
+
+    document.querySelector('.js-add-button').addEventListener('click',()=>{
+      addTodoTask();
+    });
+
+    function addTodoTask(){
+        const inputTaskElement=document.querySelector('.js-todo-task');
+        const name=inputTaskElement.value;
+
+        const inputDuedateElement=document.querySelector('.js-duedate');
+        const dueDate=inputDuedateElement.value;
+
+        todoTask.push(
+        {
+          //name:name, 
+          //dueDate:dueDate
+          //short-hand-form
+          name,
+          dueDate
+        }
+        );
+        localStorage.setItem('todoList',JSON.stringify(todoTask));
+        inputTaskElement.value='';
+        rendartodoTask();
+    }
+    //console.log(localStorage.getItem('todoList'));
+  </script>
+</body>
+</html>
